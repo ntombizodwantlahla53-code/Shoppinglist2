@@ -1,11 +1,16 @@
-import http = require("http");
+import http, { IncomingMessage, ServerResponse } from "http";
+import { shoppinglistRouter } from "./routes/shoppinglist.js"
 
 
-const PORT = 9000;
+const PORT = 3000;
 
 const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) => {
-    res.writeHead(200, {"content-type": "application/json"})
-    res.end(JSON.stringify({message: "Hello World"}))
+    if (req.url?.startsWith("/shoppinglist")){
+        shoppinglistRouter(req, res);
+    } else {
+        res.writeHead(200, {"content-type": "application/json"})
+        res.end(JSON.stringify({message: "Hello world"}));
+        }
 };
 
 const server = http.createServer(requestListener)
