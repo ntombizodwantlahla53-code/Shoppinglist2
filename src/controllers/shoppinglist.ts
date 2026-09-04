@@ -31,7 +31,14 @@ export const deleteShoppingListItem = (id: number): ShoppingListItem | undefined
     }
 
     const deletedItem = shoppingList.splice(itemIndex, 1)[0];
-
     return deletedItem;
 };
+export const updateShoppingListItem = (id: number, updates: Partial<Omit<ShoppingListItem, "id">>): ShoppingListItem | undefined =>{
+    const item = getShoppingListItemById(id);
+    if(!item) return undefined;
+    if(updates.purchased !== undefined) item.purchased = updates.purchased;
+    if(updates.quantity !== undefined) item.quantity = updates.quantity;
+
+    return item;
+}
     

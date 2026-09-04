@@ -1,7 +1,5 @@
 import http, { IncomingMessage, ServerResponse } from "http";
-import { getShoppingList, getShoppingListItemById, addShoppingListItem ,deleteShoppingListItem} from "../controllers/shoppinglist.js";
-    
-} from "../controllers/shoppinglist.js";
+import { getShoppingList, getShoppingListItemById, addShoppingListItem, deleteShoppingListItem, updateShoppingListItem } from "../controllers/shoppinglist.js";
 
 export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) => {
     if (req.url?.startsWith("/shoppinglist")) {
@@ -15,9 +13,9 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
         }
         if (req.method === "GET" && id) {
             if(isNaN(id)){
-                res.writeHead(400, {"content-type": "äpplication/json"})
+                res.writeHead(400, {"content-type": "application/json"})
                 res.end(JSON.stringify({error: "invalid item id"}));
-                return:
+                return;
             }
             const item = getShoppingListItemById(id)
             if (!item){
@@ -49,7 +47,7 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
                     res.end(JSON.stringify({error: "quantity is required"}));
                     return;
                 }
-                if(!purchased || typeof purchased !== "boolean"){
+                if(  typeof purchased !== "boolean"){
                     res.writeHead(400,  {"content-type": "application/json"});
                     res.end(JSON.stringify({error: "purchased is required"}));
                     return;
@@ -81,7 +79,23 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
     res.writeHead(200, {"content-type": "application/json"});
     res.end(JSON.stringify(deletedItem));
     return 
-        }
+    }
+        if(req.method === "PUT" && id) {
+            let body = "";
+            req.on("data", chunk =>{
+                body += chunk.toString();
+            });
+
+            req.on("end", () => {
+                const updates = JSON.parse(body);
+                const updatedItem = updateShoppingListItem(id, updates);
+
+                if(!updatedItem){
+                    res.writeHead(404, {"content-type": "application/json"});
+                    res.end(JSON.stringify({message: "Not found"}));
+                    return;}
+                })
+            }
         res.writeHead(405, {"content-type": "application/json"});
         res.end(JSON.stringify({error: "method not allowed on/itemslist"}));
     }
