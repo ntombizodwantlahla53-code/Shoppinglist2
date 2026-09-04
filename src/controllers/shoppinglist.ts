@@ -23,4 +23,15 @@ export const addShoppingListItem = (name: string, quantity: number, purchased: b
     shoppingList.push(newItem);
     return newItem;
 }
+export const deleteShoppingListItem = (id: number): ShoppingListItem | undefined => {
+    const itemIndex = shoppingList.findIndex((item) => item.id === id);
+
+    if (itemIndex === -1) {
+        return undefined;
+    }
+
+    const deletedItem = shoppingList.splice(itemIndex, 1)[0];
+
+    return deletedItem;
+};
     
