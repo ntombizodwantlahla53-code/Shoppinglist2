@@ -1,5 +1,7 @@
 import http, { IncomingMessage, ServerResponse } from "http";
-import { getShoppingList, getShoppingListItemById, addShoppingListItem } from "../controllers/shoppinglist.js";
+import { getShoppingList, getShoppingListItemById, addShoppingListItem ,deleteShoppingListItem} from "../controllers/shoppinglist.js";
+    
+} from "../controllers/shoppinglist.js";
 
 export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) => {
     if (req.url?.startsWith("/shoppinglist")) {
@@ -15,6 +17,7 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
             if(isNaN(id)){
                 res.writeHead(400, {"content-type": "äpplication/json"})
                 res.end(JSON.stringify({error: "invalid item id"}));
+                return:
             }
             const item = getShoppingListItemById(id)
             if (!item){
@@ -38,16 +41,19 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
                 if(!name || typeof name !== "string"){
                     res.writeHead(400,  {"content-type": "application/json"});
                     res.end(JSON.stringify({error: "item name is required"}));
+                    return;
 
                 }
                 if(!quantity || typeof quantity !== "number"){
                     res.writeHead(400,  {"content-type": "application/json"});
                     res.end(JSON.stringify({error: "quantity is required"}));
+                    return;
                 }
                 if(!purchased || typeof purchased !== "boolean"){
                     res.writeHead(400,  {"content-type": "application/json"});
                     res.end(JSON.stringify({error: "purchased is required"}));
-                }
+                    return;
+                        }
                 const newShoppinglistitem = addShoppingListItem(name, quantity, purchased)
             res.writeHead(201, {"content-type": "application/json"});
             res.end(JSON.stringify(newShoppinglistitem));
