@@ -64,6 +64,24 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
             });
             return;
         }
+        if (req.method === "DELETE" && id) {
+    if (isNaN(id)) {
+        res.writeHead(400, {"content-type": "application/json"});
+        res.end(JSON.stringify({error: "invalid item id"}));
+        return;
+    }
+
+    const deletedItem = deleteShoppingListItem(id);
+    if (!deletedItem) {
+        res.writeHead(404, {"content-type": "application/json"});
+        res.end(JSON.stringify({error: "item not found"}));
+        return;
+    }
+
+    res.writeHead(200, {"content-type": "application/json"});
+    res.end(JSON.stringify(deletedItem));
+    return 
+        }
         res.writeHead(405, {"content-type": "application/json"});
         res.end(JSON.stringify({error: "method not allowed on/itemslist"}));
     }
