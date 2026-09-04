@@ -18,7 +18,7 @@ export const addShoppingListItem = (name: string, quantity: number, purchased: b
         id: ++currentId,
         name,
         quantity,
-        purchased: false,
+        purchased,
     };
     shoppingList.push(newItem);
     return newItem;
