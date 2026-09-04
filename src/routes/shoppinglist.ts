@@ -80,23 +80,33 @@ export const shoppinglistRouter = (req: IncomingMessage, res: ServerResponse) =>
     res.end(JSON.stringify(deletedItem));
     return 
     }
-        if(req.method === "PUT" && id) {
-            let body = "";
-            req.on("data", chunk =>{
-                body += chunk.toString();
-            });
+        if (req.method === 'PUT' && id !== undefined) {
+            if (isNaN(id)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ message: "Invalid item ID" }));
+        }
+        let body = '';
+        req.on('data', chunk => body += chunk.toString());
+        req.on('end', () => {
+        try {
 
-            req.on("end", () => {
-                const updates = JSON.parse(body);
-                const updatedItem = updateShoppingListItem(id, updates);
+        const updates = JSON.parse(body);
+        const updatedItem = updateShoppingListItem(id, updates);
 
-                if(!updatedItem){
-                    res.writeHead(404, {"content-type": "application/json"});
-                    res.end(JSON.stringify({message: "Not found"}));
-                    return;}
-                })
+        if (!updatedItem) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ message: "Item not found" }));
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(updatedItem));
+        } catch {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: "Invalid JSON" }));
+        }
+        });
+        return;
+        }
+                res.writeHead(405, {"content-type": "application/json"});
+                res.end(JSON.stringify({error: "method not allowed on/itemslist"}));
             }
-        res.writeHead(405, {"content-type": "application/json"});
-        res.end(JSON.stringify({error: "method not allowed on/itemslist"}));
-    }
-}
+        }

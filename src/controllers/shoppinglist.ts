@@ -36,6 +36,7 @@ export const deleteShoppingListItem = (id: number): ShoppingListItem | undefined
 export const updateShoppingListItem = (id: number, updates: Partial<Omit<ShoppingListItem, "id">>): ShoppingListItem | undefined =>{
     const item = getShoppingListItemById(id);
     if(!item) return undefined;
+    if(updates.name !== undefined) item.name = updates.name;
     if(updates.purchased !== undefined) item.purchased = updates.purchased;
     if(updates.quantity !== undefined) item.quantity = updates.quantity;
 
